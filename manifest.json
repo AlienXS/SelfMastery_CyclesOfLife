@@ -1,0 +1,26 @@
+{
+  "name": "Self Mastery & Fate — Cycles of Life",
+  "short_name": "Cycles of Life",
+  "description": "Daily forecasts based on H. Spencer Lewis's Self Mastery and Fate with the Cycles of Life (AMORC, 1929)",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e0c07",
+  "theme_color": "#0e0c07",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "utilities"],
+  "lang": "en"
+}

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#0e0c07">
+  <meta id="themeColorMeta" name="theme-color" content="#0e0c07">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Cycles of Life">
@@ -17,613 +17,445 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* ── RESET & ROOT ─────────────────────────────────────────── */
+    /* ── RESET ─────────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── SHARED ─────────────────────────────────────────────────── */
     :root {
-      --gold:        #C9A84C;
-      --gold-dim:    #8a6e2a;
-      --gold-glow:   rgba(201,168,76,0.15);
-      --bg:          #0e0c07;
-      --bg2:         #171410;
-      --bg3:         #1e1a11;
-      --ink:         #e8dfc8;
-      --ink-dim:     #9a8e72;
-      --ink-faint:   #4a4232;
-      --border:      rgba(201,168,76,0.18);
-      --border-dim:  rgba(201,168,76,0.08);
-      --favor:       #4a8c5c;
-      --avoid:       #8c4a4a;
-      --r-sm:        8px;
-      --r-md:        12px;
-      --r-lg:        16px;
-      --safe-top:    env(safe-area-inset-top, 0px);
-      --safe-bot:    env(safe-area-inset-bottom, 0px);
+      --r-sm:     8px;
+      --r-md:     12px;
+      --r-lg:     16px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bot: env(safe-area-inset-bottom, 0px);
     }
 
+    /* ── DARK THEME (default) ───────────────────────────────────── */
+    :root, [data-theme="dark"] {
+      --gold:          #C9A84C;
+      --gold-dim:      #8a6e2a;
+      --gold-glow:     rgba(201,168,76,0.15);
+      --bg:            #0e0c07;
+      --bg2:           #171410;
+      --bg3:           #1e1a11;
+      --ink:           #e8dfc8;
+      --ink-dim:       #9a8e72;
+      --ink-faint:     #4a4232;
+      --border:        rgba(201,168,76,0.18);
+      --border-dim:    rgba(201,168,76,0.09);
+      --input-bg:      #0a0906;
+      --note-bg:       rgba(0,0,0,0.35);
+      --advice-bg:     rgba(0,0,0,0.20);
+      --favor:         #2e7d50;
+      --avoid:         #8c3a3a;
+      --now-bg:        rgba(201,168,76,0.07);
+      --gradient-top:  rgba(201,168,76,0.06);
+      --noise-op:      0.04;
+      --shadow:        0 2px 12px rgba(0,0,0,0.5);
+    }
+
+    /* ── LIGHT THEME ────────────────────────────────────────────── */
+    [data-theme="light"] {
+      --gold:          #7a5500;
+      --gold-dim:      #a07020;
+      --gold-glow:     rgba(122,85,0,0.10);
+      --bg:            #faf7f0;
+      --bg2:           #f2ece0;
+      --bg3:           #ebe4d3;
+      --ink:           #1c1810;
+      --ink-dim:       #55492e;
+      --ink-faint:     #b8a880;
+      --border:        rgba(122,85,0,0.20);
+      --border-dim:    rgba(122,85,0,0.10);
+      --input-bg:      #ffffff;
+      --note-bg:       rgba(122,85,0,0.06);
+      --advice-bg:     rgba(122,85,0,0.04);
+      --favor:         #1a5e32;
+      --avoid:         #7a2020;
+      --now-bg:        rgba(122,85,0,0.07);
+      --gradient-top:  rgba(122,85,0,0.04);
+      --noise-op:      0.015;
+      --shadow:        0 2px 12px rgba(0,0,0,0.10);
+    }
+
+    /* ── BASE ───────────────────────────────────────────────────── */
     html { height: 100%; background: var(--bg); }
 
     body {
       font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px;
       background: var(--bg);
       color: var(--ink);
       min-height: 100%;
       padding-top: var(--safe-top);
       padding-bottom: calc(var(--safe-bot) + 1rem);
       -webkit-font-smoothing: antialiased;
+      transition: background 0.3s, color 0.3s;
     }
 
-    /* Parchment texture overlay */
+    /* texture overlay */
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%),
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 80% 60% at 50% 0%, var(--gradient-top) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='var(--noise-op)'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
     }
 
-    /* ── LAYOUT ───────────────────────────────────────────────── */
+    /* ── LAYOUT ─────────────────────────────────────────────────── */
     .app {
-      position: relative;
-      z-index: 1;
-      max-width: 560px;
-      margin: 0 auto;
-      padding: 1.5rem 1rem 4rem;
+      position: relative; z-index: 1;
+      max-width: 560px; margin: 0 auto;
+      padding: 1.25rem 1rem 4rem;
     }
 
-    /* ── HEADER ───────────────────────────────────────────────── */
+    /* ── THEME TOGGLE ───────────────────────────────────────────── */
+    .theme-toggle {
+      position: absolute;
+      top: 0; right: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      padding: 4px 0;
+    }
+
+    .theme-toggle-label {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      transition: color 0.2s;
+    }
+
+    /* pill switch */
+    .toggle-pill {
+      width: 40px; height: 22px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      position: relative;
+      transition: background 0.25s, border-color 0.25s;
+      flex-shrink: 0;
+    }
+
+    .toggle-pill::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    [data-theme="light"] .toggle-pill::after {
+      transform: translateX(18px);
+      background: var(--gold);
+    }
+
+    .toggle-icon {
+      font-size: 13px;
+      line-height: 1;
+      transition: opacity 0.2s;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────────── */
     .header {
       text-align: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
+      padding: 0.5rem 0 1.5rem;
       border-bottom: 0.5px solid var(--border);
     }
 
     .header-emblem {
-      font-size: 28px;
-      letter-spacing: 1px;
-      margin-bottom: 0.75rem;
-      line-height: 1;
-      animation: emblem-glow 4s ease-in-out infinite;
+      font-size: 26px; letter-spacing: 2px;
+      margin-bottom: 0.65rem; line-height: 1;
+      animation: glow 5s ease-in-out infinite;
     }
 
-    @keyframes emblem-glow {
-      0%, 100% { filter: drop-shadow(0 0 4px rgba(201,168,76,0.3)); }
-      50%       { filter: drop-shadow(0 0 12px rgba(201,168,76,0.7)); }
+    @keyframes glow {
+      0%,100% { filter: drop-shadow(0 0 3px rgba(201,168,76,0.25)); }
+      50%      { filter: drop-shadow(0 0 10px rgba(201,168,76,0.60)); }
     }
 
     .header h1 {
       font-family: 'Cinzel', serif;
-      font-size: 16px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      color: var(--gold);
-      line-height: 1.6;
-      margin-bottom: 0.3rem;
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 2px; color: var(--gold);
+      line-height: 1.6; margin-bottom: 0.3rem;
       text-transform: uppercase;
     }
 
-    .header p {
-      font-size: 12px;
-      color: var(--ink-dim);
-      font-style: italic;
-      letter-spacing: 0.5px;
-    }
+    .header p { font-size: 13px; color: var(--ink-dim); font-style: italic; }
 
-    /* ── CARDS ────────────────────────────────────────────────── */
+    /* ── CARDS ──────────────────────────────────────────────────── */
     .card {
       background: var(--bg2);
       border: 0.5px solid var(--border);
       border-radius: var(--r-lg);
-      padding: 1.25rem;
-      margin-bottom: 1rem;
+      padding: 1.25rem; margin-bottom: 1rem;
+      transition: background 0.3s, border-color 0.3s;
     }
 
     .card-secondary {
       background: var(--bg3);
       border: 0.5px solid var(--border-dim);
       border-radius: var(--r-lg);
-      padding: 1.25rem;
-      margin-bottom: 1rem;
+      padding: 1.25rem; margin-bottom: 1rem;
+      transition: background 0.3s;
     }
 
-    /* ── FORM ─────────────────────────────────────────────────── */
+    /* ── FORM ───────────────────────────────────────────────────── */
     .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 0.85rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.75rem; margin-bottom: 0.85rem;
     }
 
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field.full { grid-column: 1 / -1; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1/-1; }
 
     .field label {
       font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
+      font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--ink-dim);
     }
 
-    .field input,
-    .field select {
+    .field input, .field select {
       font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      background: var(--bg);
+      font-size: 16px;
+      background: var(--input-bg);
       color: var(--ink);
-      border: 0.5px solid var(--ink-faint);
+      border: 1px solid var(--border-dim);
       border-radius: var(--r-sm);
-      padding: 8px 10px;
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-      transition: border-color 0.2s;
+      padding: 9px 11px; outline: none;
+      -webkit-appearance: none; appearance: none;
+      transition: border-color 0.2s, background 0.3s;
     }
 
-    .field input:focus,
-    .field select:focus { border-color: var(--gold); }
+    .field input:focus, .field select:focus { border-color: var(--gold); }
 
-    /* Custom select arrow */
     .select-wrap { position: relative; }
     .select-wrap::after {
-      content: '▾';
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--gold-dim);
-      font-size: 12px;
-      pointer-events: none;
+      content: '▾'; position: absolute;
+      right: 11px; top: 50%; transform: translateY(-50%);
+      color: var(--gold-dim); font-size: 13px; pointer-events: none;
     }
-    .select-wrap select { width: 100%; padding-right: 28px; }
+    .select-wrap select { width: 100%; padding-right: 30px; }
 
     .tz-row { display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 0.5rem; }
     .tz-row .field { flex: 1; }
 
     .detect-btn {
-      height: 38px;
-      padding: 0 12px;
+      height: 40px; padding: 0 13px;
       font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--ink-dim);
-      border: 0.5px solid var(--ink-faint);
-      border-radius: var(--r-sm);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s;
-      flex-shrink: 0;
+      font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+      background: transparent; color: var(--ink-dim);
+      border: 1px solid var(--border-dim);
+      border-radius: var(--r-sm); cursor: pointer;
+      white-space: nowrap; transition: all 0.15s; flex-shrink: 0;
     }
     .detect-btn:active { color: var(--gold); border-color: var(--gold); }
 
     .tz-note {
-      font-size: 11.5px;
-      font-style: italic;
-      color: var(--ink-dim);
-      margin-bottom: 0.85rem;
-      padding: 6px 10px;
-      background: rgba(0,0,0,0.3);
+      font-size: 12px; font-style: italic; color: var(--ink-dim);
+      margin-bottom: 0.85rem; padding: 7px 11px;
+      background: var(--note-bg);
       border-radius: var(--r-sm);
       border-left: 2px solid var(--gold-dim);
-      line-height: 1.5;
+      line-height: 1.55; transition: background 0.3s;
     }
 
     .calc-btn {
-      width: 100%;
-      padding: 13px;
+      width: 100%; padding: 13px;
       font-family: 'Cinzel', serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--gold);
-      border: 0.5px solid var(--gold-dim);
-      border-radius: var(--r-md);
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--r-md); cursor: pointer;
+      transition: all 0.2s; position: relative; overflow: hidden;
     }
-
     .calc-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--gold-glow);
-      opacity: 0;
-      transition: opacity 0.2s;
+      content: ''; position: absolute; inset: 0;
+      background: var(--gold-glow); opacity: 0; transition: opacity 0.2s;
     }
     .calc-btn:active::before { opacity: 1; }
     .calc-btn:active { transform: scale(0.98); }
 
-    /* ── RESULTS ──────────────────────────────────────────────── */
+    /* ── RESULTS ────────────────────────────────────────────────── */
     .results { display: none; }
-    .results.on { display: block; animation: fade-in 0.4s ease; }
-
-    @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .results.on { display: block; animation: fadein 0.35s ease; }
+    @keyframes fadein { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 
     .date-line {
-      text-align: center;
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: var(--ink-dim);
-      margin-bottom: 1.1rem;
-      text-transform: uppercase;
+      text-align: center; font-family: 'Cinzel', serif;
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ink-dim); margin-bottom: 1.1rem;
     }
 
-    /* ── TABS ─────────────────────────────────────────────────── */
-    .tabs {
-      display: flex;
-      margin-bottom: 1.25rem;
-      border-bottom: 0.5px solid var(--border);
-      gap: 0;
-    }
+    /* ── TABS ───────────────────────────────────────────────────── */
+    .tabs { display: flex; margin-bottom: 1.25rem; border-bottom: 0.5px solid var(--border); }
 
     .tab {
-      flex: 1;
-      padding: 10px 4px;
+      flex: 1; padding: 10px 4px;
       font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-align: center;
-      cursor: pointer;
-      color: var(--ink-dim);
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      text-align: center; cursor: pointer; color: var(--ink-dim);
+      border-bottom: 2px solid transparent; transition: all 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-
     .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
     .panel { display: none; }
     .panel.active { display: block; }
 
-    /* ── SUMMARY CARDS ────────────────────────────────────────── */
-    .sum-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 1rem;
-    }
+    /* ── SUMMARY CARDS ──────────────────────────────────────────── */
+    .sum-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1rem; }
 
     .sum-card {
-      background: var(--bg3);
-      border: 0.5px solid var(--border-dim);
-      border-radius: var(--r-md);
-      padding: 0.85rem 0.65rem;
-      text-align: center;
+      background: var(--bg3); border: 0.5px solid var(--border-dim);
+      border-radius: var(--r-md); padding: 0.85rem 0.6rem; text-align: center;
+      transition: background 0.3s;
     }
 
     .sum-label {
-      font-family: 'Cinzel', serif;
-      font-size: 8px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 5px;
-      line-height: 1.3;
+      font-family: 'Cinzel', serif; font-size: 8.5px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ink-dim); margin-bottom: 5px; line-height: 1.3;
     }
 
-    .sum-num {
-      font-size: 30px;
-      font-weight: 600;
-      line-height: 1;
-      color: var(--gold);
-      margin-bottom: 3px;
-    }
+    .sum-num { font-size: 32px; font-weight: 600; line-height: 1; color: var(--gold); margin-bottom: 3px; }
+    .sum-sub { font-size: 11px; font-style: italic; color: var(--ink-dim); line-height: 1.3; }
 
-    .sum-sub {
-      font-size: 10px;
-      font-style: italic;
-      color: var(--ink-dim);
-      line-height: 1.3;
-    }
-
-    /* ── FORECAST CARD ────────────────────────────────────────── */
+    /* ── FORECAST CARD ──────────────────────────────────────────── */
     .fc-head {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 0.85rem;
-      padding-bottom: 0.75rem;
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 0.85rem; padding-bottom: 0.75rem;
       border-bottom: 0.5px solid var(--border-dim);
     }
-
-    .fc-num {
-      font-size: 44px;
-      font-weight: 600;
-      line-height: 1;
-      color: var(--gold);
-      flex-shrink: 0;
-    }
-
+    .fc-num { font-size: 44px; font-weight: 600; line-height: 1; color: var(--gold); flex-shrink: 0; }
     .fc-period-label {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 2px;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 2px;
     }
+    .fc-keyword { font-size: 18px; font-style: italic; color: var(--ink); }
+    .fc-body { font-size: 15px; line-height: 1.85; font-style: italic; color: var(--ink-dim); }
 
-    .fc-keyword { font-size: 17px; font-style: italic; color: var(--ink); }
-
-    .fc-body {
-      font-size: 14px;
-      line-height: 1.85;
-      font-style: italic;
-      color: var(--ink-dim);
-    }
-
-    /* ── TIMELINE ─────────────────────────────────────────────── */
+    /* ── TIMELINE ───────────────────────────────────────────────── */
     .section-title {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 0.65rem;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ink-dim); margin-bottom: 0.65rem;
     }
 
     .tl-row {
-      display: grid;
-      grid-template-columns: 108px 1fr auto;
-      gap: 6px;
-      align-items: center;
-      padding: 7px 0;
-      border-bottom: 0.5px solid var(--border-dim);
-      font-size: 12.5px;
+      display: grid; grid-template-columns: 112px 1fr auto;
+      gap: 6px; align-items: center;
+      padding: 8px 0; border-bottom: 0.5px solid var(--border-dim); font-size: 13px;
     }
-
     .tl-row:last-child { border-bottom: none; }
-
     .tl-row.current {
-      background: rgba(201,168,76,0.06);
-      border-radius: var(--r-sm);
-      padding: 8px 8px;
-      border-bottom: none;
-      margin-bottom: 1px;
+      background: var(--now-bg); border-radius: var(--r-sm);
+      padding: 8px 9px; border-bottom: none; margin-bottom: 1px;
     }
-
-    .tl-time {
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      color: var(--ink-dim);
-      white-space: nowrap;
-    }
-
+    .tl-time { font-family: 'Cinzel', serif; font-size: 10.5px; letter-spacing: 0.5px; color: var(--ink-dim); white-space: nowrap; }
+    .tl-desc { color: var(--ink-dim); font-size: 13px; }
     .tl-now {
-      font-size: 9px;
-      font-family: 'Cinzel', serif;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--gold);
-      padding: 2px 6px;
-      border: 0.5px solid var(--gold-dim);
-      border-radius: 3px;
-      white-space: nowrap;
+      font-size: 9px; font-family: 'Cinzel', serif; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--gold); padding: 2px 7px; border: 1px solid var(--gold-dim); border-radius: 3px; white-space: nowrap;
     }
+    .tl-side { font-size: 10.5px; font-style: italic; color: var(--ink-faint); text-align: right; }
 
-    .tl-side {
-      font-size: 10px;
-      font-style: italic;
-      color: var(--ink-faint);
-      text-align: right;
-    }
-
-    /* ── ADVICE CARD ──────────────────────────────────────────── */
-    .advice-card {
-      border: 0.5px solid var(--border);
-      border-radius: var(--r-lg);
-      overflow: hidden;
-      margin-bottom: 1rem;
-    }
+    /* ── ADVICE CARD ────────────────────────────────────────────── */
+    .advice-card { border: 0.5px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 1rem; }
 
     .advice-header {
-      background: var(--bg3);
-      padding: 0.85rem 1.1rem;
+      background: var(--bg3); padding: 0.85rem 1.1rem;
       border-bottom: 0.5px solid var(--border-dim);
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
+      display: flex; align-items: baseline; gap: 12px;
+      transition: background 0.3s;
     }
+    .advice-header-num { font-size: 28px; font-weight: 600; line-height: 1; color: var(--gold); }
+    .advice-label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 2px; }
+    .advice-title { font-size: 16px; font-style: italic; color: var(--ink); }
 
-    .advice-header-num {
-      font-size: 28px;
-      font-weight: 600;
-      line-height: 1;
-      color: var(--gold);
-    }
-
-    .advice-label {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 2px;
-    }
-
-    .advice-title { font-size: 15px; font-style: italic; color: var(--ink); }
-
-    .advice-columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      background: var(--bg2);
-    }
-
-    .advice-col {
-      padding: 0.85rem 1rem;
-    }
-
+    .advice-columns { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg2); transition: background 0.3s; }
+    .advice-col { padding: 0.85rem 1rem; }
     .advice-col:first-child { border-right: 0.5px solid var(--border-dim); }
 
     .advice-col-head {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 0.6rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--ink-dim);
+      font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px; color: var(--ink-dim);
     }
-
     .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
     .dot-favor { background: var(--favor); }
     .dot-avoid { background: var(--avoid); }
 
-    .advice-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .advice-list li {
-      font-size: 12.5px;
-      line-height: 1.5;
-      padding-left: 12px;
-      position: relative;
-      color: var(--ink-dim);
-    }
-
-    .advice-list li::before {
-      content: '·';
-      position: absolute;
-      left: 0;
-      color: var(--gold-dim);
-    }
+    .advice-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .advice-list li { font-size: 13px; line-height: 1.55; padding-left: 13px; position: relative; color: var(--ink-dim); }
+    .advice-list li::before { content: '·'; position: absolute; left: 0; color: var(--gold-dim); }
 
     .advice-summary {
       padding: 0.85rem 1.1rem;
       border-top: 0.5px solid var(--border-dim);
-      font-size: 13px;
-      line-height: 1.75;
-      font-style: italic;
-      color: var(--ink-dim);
-      background: rgba(0,0,0,0.25);
+      font-size: 13.5px; line-height: 1.75; font-style: italic;
+      color: var(--ink-dim); background: var(--advice-bg);
+      transition: background 0.3s;
     }
 
-    /* ── PERIOD DETAIL ────────────────────────────────────────── */
+    /* ── PERIOD DETAIL ──────────────────────────────────────────── */
     .pd-head {
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--ink-dim);
-      margin-bottom: 0.5rem;
+      font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.5rem;
     }
+    .pd-body { font-size: 15px; line-height: 1.85; font-style: italic; color: var(--ink-dim); }
 
-    .pd-body {
-      font-size: 14px;
-      line-height: 1.85;
-      font-style: italic;
-      color: var(--ink-dim);
-    }
-
-    /* ── YEAR PERIODS ─────────────────────────────────────────── */
+    /* ── YEAR PERIODS ───────────────────────────────────────────── */
     .yp-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 0.5px solid var(--border-dim);
-      font-size: 12.5px;
-      gap: 6px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 0.5px solid var(--border-dim); gap: 6px;
     }
-
     .yp-row:last-child { border-bottom: none; }
     .yp-row.active-period .yp-name { color: var(--gold); }
-
-    .yp-label {
-      font-family: 'Cinzel', serif;
-      font-size: 10px;
-      letter-spacing: 1px;
-      color: var(--ink-dim);
-      white-space: nowrap;
-    }
-
-    .yp-name { font-style: italic; flex: 1; text-align: center; color: var(--ink-dim); }
-
+    .yp-label { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 1px; color: var(--ink-dim); white-space: nowrap; }
+    .yp-name { font-size: 13.5px; font-style: italic; flex: 1; text-align: center; color: var(--ink-dim); }
     .yp-dates { font-size: 11px; color: var(--ink-faint); text-align: right; white-space: nowrap; }
-
     .yp-badge {
-      font-size: 9px;
-      font-family: 'Cinzel', serif;
-      letter-spacing: 1px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      background: rgba(201,168,76,0.15);
-      color: var(--gold);
-      white-space: nowrap;
-      margin-left: 4px;
+      font-size: 9px; font-family: 'Cinzel', serif; letter-spacing: 1px;
+      padding: 2px 6px; border-radius: 3px;
+      background: var(--gold-glow); color: var(--gold); white-space: nowrap; margin-left: 4px;
     }
 
-    /* ── ABOUT TAB ────────────────────────────────────────────── */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 1rem;
-    }
+    /* ── ABOUT TAB ──────────────────────────────────────────────── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
 
-    /* ── FOOTER NOTE ──────────────────────────────────────────── */
-    .footer-note {
-      font-size: 11.5px;
-      color: var(--ink-faint);
-      text-align: center;
-      font-style: italic;
-      padding-top: 1rem;
-      line-height: 1.7;
-      border-top: 0.5px solid var(--border-dim);
-      margin-top: 0.5rem;
-    }
-
-    /* ── INSTALL BANNER ───────────────────────────────────────── */
+    /* ── INSTALL BANNER ─────────────────────────────────────────── */
     .install-banner {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: rgba(201,168,76,0.08);
-      border: 0.5px solid var(--border);
-      border-radius: var(--r-md);
-      padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
-      font-size: 13px;
-      color: var(--ink-dim);
-      font-style: italic;
+      display: none; align-items: center; justify-content: space-between; gap: 10px;
+      background: var(--note-bg); border: 0.5px solid var(--border);
+      border-radius: var(--r-md); padding: 0.75rem 1rem;
+      margin-bottom: 1rem; font-size: 13px; color: var(--ink-dim); font-style: italic;
     }
-
     .install-banner.visible { display: flex; }
-
     .install-btn {
-      flex-shrink: 0;
-      font-family: 'Cinzel', serif;
-      font-size: 9px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      background: transparent;
-      color: var(--gold);
-      border: 0.5px solid var(--gold-dim);
-      border-radius: var(--r-sm);
-      padding: 6px 12px;
-      cursor: pointer;
-      white-space: nowrap;
+      flex-shrink: 0; font-family: 'Cinzel', serif; font-size: 9px;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      border-radius: var(--r-sm); padding: 6px 12px; cursor: pointer; white-space: nowrap;
     }
 
-    /* ── SCROLLBAR ────────────────────────────────────────────── */
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    .footer-note {
+      font-size: 12px; color: var(--ink-faint); text-align: center;
+      font-style: italic; padding-top: 1rem; line-height: 1.7;
+      border-top: 0.5px solid var(--border-dim); margin-top: 0.5rem;
+    }
+
+    /* ── SCROLLBAR ──────────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--ink-faint); border-radius: 2px; }
@@ -633,6 +465,13 @@
 
 <div class="app">
 
+  <!-- THEME TOGGLE -->
+  <div class="theme-toggle" onclick="toggleTheme()" role="button" aria-label="Toggle light/dark theme">
+    <span class="toggle-icon" id="themeIcon">☀︎</span>
+    <div class="toggle-pill" id="themePill"></div>
+    <span class="toggle-icon">☽</span>
+  </div>
+
   <!-- HEADER -->
   <div class="header">
     <div class="header-emblem">☽ ✦ ☾</div>
@@ -640,7 +479,7 @@
     <p>H. Spencer Lewis · Rosicrucian Order AMORC · 1929</p>
   </div>
 
-  <!-- PWA INSTALL PROMPT -->
+  <!-- INSTALL BANNER -->
   <div class="install-banner" id="installBanner">
     <span>Add to your home screen for offline use</span>
     <button class="install-btn" id="installBtn">Install</button>
@@ -664,7 +503,7 @@
     </div>
 
     <div class="tz-row">
-      <div class="field" style="flex:1">
+      <div class="field">
         <label>Standard Time Offset (no daylight saving)</label>
         <div class="select-wrap">
           <select id="tzOffset">
@@ -709,9 +548,7 @@
       <button class="detect-btn" onclick="detectTZ()">⌖ Auto</button>
     </div>
 
-    <div class="tz-note" id="tz-note">
-      Lewis instructs: use standard time only — ignore daylight saving.
-    </div>
+    <div class="tz-note" id="tz-note">Lewis instructs: use standard time only — ignore daylight saving.</div>
 
     <button class="calc-btn" onclick="calculate()">✦ &nbsp; Calculate the Cycles &nbsp; ✦</button>
   </div>
@@ -727,7 +564,7 @@
       <div class="tab" onclick="showTab('about')">My Cycles</div>
     </div>
 
-    <!-- ── DAILY TAB ── -->
+    <!-- DAILY TAB -->
     <div class="panel active" id="tab-daily">
 
       <div class="sum-grid">
@@ -764,11 +601,11 @@
         <div id="tl-rows"></div>
       </div>
 
-      <div class="advice-card" id="advice-card">
+      <div class="advice-card">
         <div class="advice-header">
           <div class="advice-header-num" id="adv-num">—</div>
           <div>
-            <div class="advice-label">Practical Guidance</div>
+            <div class="advice-label">Practical Guidance for this Period</div>
             <div class="advice-title" id="adv-title">—</div>
           </div>
         </div>
@@ -792,7 +629,7 @@
 
     </div><!-- /tab-daily -->
 
-    <!-- ── YEAR TAB ── -->
+    <!-- YEAR TAB -->
     <div class="panel" id="tab-yearperiod">
 
       <div class="card">
@@ -813,7 +650,7 @@
 
     </div><!-- /tab-yearperiod -->
 
-    <!-- ── ABOUT TAB ── -->
+    <!-- ABOUT TAB -->
     <div class="panel" id="tab-about">
 
       <div class="about-grid">
@@ -852,7 +689,7 @@
 </div><!-- /app -->
 
 <script>
-// ── DATA ─────────────────────────────────────────────────────────
+// ── DATA ─────────────────────────────────────────────────────────────────
 
 const PERIOD_MINS = Array.from({length:8}, (_,i) => Math.round(i*(1440/7)));
 const NOTES = ['G','A','B','C','D','E','F'];
@@ -860,12 +697,8 @@ const DAY_FIRST_NOTE = [0,3,6,2,5,1,4];
 const NOTE_PLANET = {G:'Sol (Sun)',A:'Luna (Moon)',B:'Mars',C:'Mercury',D:'Jupiter',E:'Venus',F:'Saturn'};
 
 const PERIOD_KEYWORDS = [
-  'Personal Power & Advancement',
-  'Movement & Change',
-  'Vital Energy & Action',
-  'Mental Fertility & Expression',
-  'Success & Fruition',
-  'Pleasure & the Arts',
+  'Personal Power & Advancement','Movement & Change','Vital Energy & Action',
+  'Mental Fertility & Expression','Success & Fruition','Pleasure & the Arts',
   'Rest, Study & Inner Life'
 ];
 
@@ -881,39 +714,39 @@ const PERIOD_DESC = [
 
 const PERIOD_ADVICE = [
   {
-    favor: ['Seek recognition from superiors','Apply for positions or promotions','Request loans or important favors','Boost your public reputation','Meet with influential people','Assert leadership and individuality','Sign agreements that elevate your name'],
-    avoid: ['Passive waiting or indecision','Depending entirely on others','Hiding your abilities','Work that keeps you anonymous'],
-    summary: 'Lewis writes: "Push yourself forward with discrimination and yet determination." This period is most powerful for self-promotion and establishing honor in the eyes of those above you. Act boldly, but with integrity.'
+    favor:['Seek recognition from superiors','Apply for positions or promotions','Request loans or important favors','Boost your public reputation','Meet with influential people','Assert leadership and individuality','Sign agreements that elevate your name'],
+    avoid:['Passive waiting or indecision','Depending entirely on others','Hiding your abilities','Work that keeps you anonymous'],
+    summary:'Lewis writes: "Push yourself forward with discrimination and yet determination." This period is most powerful for self-promotion and establishing honor in the eyes of those above you. Act boldly, but with integrity.'
   },
   {
-    favor: ['Short journeys and quick trips','Changing residence or business location','Starting things that end within the year','Dealings in water, liquids, shipping','Hiring new employees','Beginning agricultural work','Swift correspondence and negotiations'],
-    avoid: ['Long-term contracts or commitments','Permanent business arrangements','Ventures intended to last many years','Long ocean voyages or expeditions'],
-    summary: 'Lewis teaches that this period governs swift, transient actions. Whatever is begun here will tend toward change or conclusion — so start only what can finish within the year, and avoid binding yourself to the future.'
+    favor:['Short journeys and quick trips','Changing residence or business location','Starting things that end within the year','Dealings in water, liquids, shipping','Hiring new employees','Beginning agricultural work','Swift correspondence and negotiations'],
+    avoid:['Long-term contracts or commitments','Permanent business arrangements','Ventures intended to last many years','Long ocean voyages or expeditions'],
+    summary:'Lewis teaches that this period governs swift, transient actions. Whatever is begun here will tend toward change or conclusion — so start only what can finish within the year, and avoid binding yourself to the future.'
   },
   {
-    favor: ['Physical labor and strenuous effort','Building, construction, engineering','Working with iron, steel, fire, machinery','Overcoming obstacles requiring endurance','Sales and forceful oratory','Launching bold campaigns or challenges','Activities demanding great vitality'],
-    avoid: ['Quarrels and confrontations','Idle rest when energy demands action','Risky speculation under impulse','Provoking disputes of any kind'],
-    summary: 'The most physically powerful period. Lewis says the individual is "filled with an almost uncontrollable impulse to do great things." Direct this fiery energy wisely: build, achieve, and conquer — but do not pick fights.'
+    favor:['Physical labor and strenuous effort','Building, construction, engineering','Working with iron, steel, fire, machinery','Overcoming obstacles requiring endurance','Sales and forceful oratory','Launching bold campaigns or challenges','Activities demanding great vitality'],
+    avoid:['Quarrels and confrontations','Idle rest when energy demands action','Risky speculation under impulse','Provoking disputes of any kind'],
+    summary:'The most physically powerful period. Lewis says the individual is "filled with an almost uncontrollable impulse to do great things." Direct this fiery energy wisely: build, achieve, and conquer — but do not pick fights.'
   },
   {
-    favor: ['Writing, planning and literary work','Acting on strong intuitive hunches','Engaging artists and mental workers','Creative and artistic projects','Philosophical or mystical study','Making decisions based on inner guidance','Correspondence and intellectual pursuits'],
-    avoid: ['Signing contracts without scrutiny','Trusting new acquaintances too quickly','Purchasing property or real estate','Getting married or forming lasting unions','Returning from a long journey'],
-    summary: 'Lewis warns: "Great deceptions can happen" under this influence. The mind soars, but the world below is slippery. Trust your own inner promptings — but verify everything that comes from outside before you sign or commit.'
+    favor:['Writing, planning and literary work','Acting on strong intuitive hunches','Engaging artists and mental workers','Creative and artistic projects','Philosophical or mystical study','Making decisions based on inner guidance','Correspondence and intellectual pursuits'],
+    avoid:['Signing contracts without scrutiny','Trusting new acquaintances too quickly','Purchasing property or real estate','Getting married or forming lasting unions','Returning from a long journey'],
+    summary:'Lewis warns: "Great deceptions can happen" under this influence. The mind soars, but the world below is slippery. Trust your own inner promptings — but verify everything that comes from outside before you sign or commit.'
   },
   {
-    favor: ['Collecting debts owed to you','Buying in order to sell at profit','Beginning long journeys','Dealings with lawyers and physicians','Legitimate speculation and investment','Forming business partnerships','All social and commercial expansion'],
-    avoid: ['Tricky or high-risk speculation','Dealings in cattle or live animals','Marine and seafaring ventures','Withholding generosity when called for'],
-    summary: 'Lewis calls this the "success period." Personal affairs expand and prosperity flows naturally. The tendency is toward fellowship, benevolence, and honest dealing. Move outward, begin the long journey, and collect what is rightfully yours.'
+    favor:['Collecting debts owed to you','Buying in order to sell at profit','Beginning long journeys','Dealings with lawyers and physicians','Legitimate speculation and investment','Forming business partnerships','All social and commercial expansion'],
+    avoid:['Tricky or high-risk speculation','Dealings in cattle or live animals','Marine and seafaring ventures','Withholding generosity when called for'],
+    summary:'Lewis calls this the "success period." Personal affairs expand and prosperity flows naturally. The tendency is toward fellowship, benevolence, and honest dealing. Move outward, begin the long journey, and collect what is rightfully yours.'
   },
   {
-    favor: ['Social entertainment and gatherings','Arts, music, decoration and beauty','Matters of the heart and romance','Marriage and new social unions','Visits to friends for relaxation','Domestic improvements and homemaking','Rest and gentle recreation'],
-    avoid: ['Heavy or speculative business ventures','Starting something requiring great force','Neglecting beauty and pleasure when offered','Pushing hard when the cosmic mood is soft'],
-    summary: 'Lewis calls this the "holiday of the year." All legitimate affairs continue well, nearly matching Period 5 in success. But the cosmic mood is love and enjoyment — honor it. Plant beauty, nurture relationships, and let the spirit breathe.'
+    favor:['Social entertainment and gatherings','Arts, music, decoration and beauty','Matters of the heart and romance','Marriage and new social unions','Visits to friends for relaxation','Domestic improvements and homemaking','Rest and gentle recreation'],
+    avoid:['Heavy or speculative business ventures','Starting something requiring great force','Neglecting beauty and pleasure when offered','Pushing hard when the cosmic mood is soft'],
+    summary:'Lewis calls this the "holiday of the year." All legitimate affairs continue well, nearly matching Period 5 in success. But the cosmic mood is love and enjoyment — honor it. Plant beauty, nurture relationships, and let the spirit breathe.'
   },
   {
-    favor: ['Rest, sleep and physical recuperation','Deep study and philosophical reading','Meditation and spiritual exercises','Writing plans for future action','Developing ideas quietly for later','Solitude and inner reflection','Reviewing what has run its course'],
-    avoid: ['Launching new business ventures','Making important binding decisions','Bold, aggressive or high-energy actions','Overexerting the physical body','Allowing the mind to become pessimistic'],
-    summary: 'Lewis writes this is "the critical and disruptive period," when things ready to end do end. Do not resist this natural dissolution — it clears the way for what comes next. Rest deeply, plan carefully, and guard against pessimism, the great danger of this period.'
+    favor:['Rest, sleep and physical recuperation','Deep study and philosophical reading','Meditation and spiritual exercises','Writing plans for future action','Developing ideas quietly for later','Solitude and inner reflection','Reviewing what has run its course'],
+    avoid:['Launching new business ventures','Making important binding decisions','Bold, aggressive or high-energy actions','Overexerting the physical body','Allowing the mind to become pessimistic'],
+    summary:'Lewis writes this is "the critical and disruptive period," when things ready to end do end. Do not resist this natural dissolution — it clears the way for what comes next. Rest deeply, plan carefully, and guard against pessimism, the great danger of this period.'
   }
 ];
 
@@ -935,291 +768,222 @@ const MONTHS_S = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','N
 const DOWS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const ORD = ['first','second','third','fourth','fifth','sixth','seventh'];
 
-// ── HELPERS ───────────────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────────────────
 
-function reduceNum(n) {
-  let s = String(n).split('').reduce((a,d) => a + parseInt(d), 0);
-  return s > 9 ? reduceNum(s) : s;
+function reduceNum(n){ let s=String(n).split('').reduce((a,d)=>a+parseInt(d),0); return s>9?reduceNum(s):s; }
+function fmt24(m){ let h=Math.floor(m/60)%24,mn=Math.round(m%60); return(h<10?'0':'')+h+':'+(mn<10?'0':'')+mn; }
+function getCurrentPeriod(m){ for(let i=0;i<7;i++) if(m<PERIOD_MINS[i+1]) return i+1; return 7; }
+function getNoteForPeriod(dow,p){ return NOTES[(DAY_FIRST_NOTE[dow]+(p-1))%7]; }
+function getBirthPeriod(bt){ if(!bt) return null; let[h,m]=bt.split(':').map(Number); return getCurrentPeriod(h*60+m); }
+function fmtDate(d){ return MONTHS_S[d.getUTCMonth()]+' '+d.getUTCDate()+', '+d.getUTCFullYear(); }
+
+function computeYearPeriod(bM,bD,fd){
+  let fy=fd.getUTCFullYear(),fm=fd.getUTCMonth()+1,fdd=fd.getUTCDate();
+  let by=fy,bms=Date.UTC(by,bM-1,bD),fms=Date.UTC(fy,fm-1,fdd);
+  if(bms>fms){by--;bms=Date.UTC(by,bM-1,bD);}
+  return{period:Math.min(7,Math.floor((fms-bms)/86400000/52)+1),bdayYear:by};
 }
 
-function fmt24(m) {
-  let h = Math.floor(m/60) % 24, mn = Math.round(m % 60);
-  return (h<10?'0':'') + h + ':' + (mn<10?'0':'') + mn;
-}
-
-function getCurrentPeriod(m) {
-  for (let i=0; i<7; i++) if (m < PERIOD_MINS[i+1]) return i+1;
-  return 7;
-}
-
-function getNoteForPeriod(dow, p) {
-  return NOTES[(DAY_FIRST_NOTE[dow] + (p-1)) % 7];
-}
-
-function getBirthPeriod(bt) {
-  if (!bt) return null;
-  let [h, m] = bt.split(':').map(Number);
-  return getCurrentPeriod(h*60 + m);
-}
-
-function fmtDate(d) {
-  return MONTHS_S[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear();
-}
-
-function computeYearPeriod(bM, bD, fd) {
-  let fy = fd.getUTCFullYear(), fm = fd.getUTCMonth()+1, fdd = fd.getUTCDate();
-  let by = fy, bms = Date.UTC(by,bM-1,bD), fms = Date.UTC(fy,fm-1,fdd);
-  if (bms > fms) { by--; bms = Date.UTC(by,bM-1,bD); }
-  return { period: Math.min(7, Math.floor((fms-bms)/86400000/52)+1), bdayYear: by };
-}
-
-function getYearPeriodDates(bM, bD, by) {
-  let p = [], cur = new Date(Date.UTC(by,bM-1,bD));
-  for (let i=0; i<7; i++) {
-    p.push({ start: new Date(cur), end: new Date(cur.getTime()+52*86400000-86400000) });
-    cur = new Date(cur.getTime()+52*86400000);
+function getYearPeriodDates(bM,bD,by){
+  let p=[],cur=new Date(Date.UTC(by,bM-1,bD));
+  for(let i=0;i<7;i++){
+    p.push({start:new Date(cur),end:new Date(cur.getTime()+52*86400000-86400000)});
+    cur=new Date(cur.getTime()+52*86400000);
   }
   return p;
 }
 
-// ── TIMEZONE ──────────────────────────────────────────────────────
+// ── THEME ─────────────────────────────────────────────────────────────────
 
-function detectTZ() {
-  try {
-    const iana = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const jan = new Date(Date.UTC(2024,0,15,12,0,0));
-    const parts = new Intl.DateTimeFormat('en-US', {
-      timeZone: iana, hour:'numeric', minute:'numeric', hour12: false
-    }).formatToParts(jan);
-    const h = parseInt(parts.find(p=>p.type==='hour').value);
-    const mn = parseInt(parts.find(p=>p.type==='minute').value);
-    let off = (h*60+mn) - 720;
-    if (off > 720) off -= 1440;
-    if (off < -720) off += 1440;
-    const offH = off / 60;
-    const sel = document.getElementById('tzOffset');
-    let best = null, bd = 999;
-    for (let o of sel.options) {
-      let v = parseFloat(o.value), d = Math.abs(v-offH);
-      if (d < bd) { bd = d; best = o.value; }
-    }
-    if (best !== null) sel.value = best;
-    document.getElementById('tz-note').textContent =
-      `Detected: ${iana} → UTC${offH>=0?'+':''}${offH} standard. Daylight saving ignored per Lewis.`;
-  } catch(e) {
-    document.getElementById('tz-note').textContent = 'Auto-detection unavailable. Select your offset manually.';
-  }
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeColorMeta').content = theme === 'light' ? '#faf7f0' : '#0e0c07';
+  try { localStorage.setItem('col_theme', theme); } catch(e){}
 }
 
-// ── TABS ──────────────────────────────────────────────────────────
-
-function showTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) =>
-    t.classList.toggle('active', ['daily','yearperiod','about'][i] === name));
-  document.querySelectorAll('.panel').forEach(p =>
-    p.classList.toggle('active', p.id === 'tab-' + name));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme');
+  applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
-// ── ADVICE ────────────────────────────────────────────────────────
+// ── TIMEZONE ──────────────────────────────────────────────────────────────
 
-function renderAdvice(per) {
-  const a = PERIOD_ADVICE[per-1];
-  document.getElementById('adv-num').textContent = per;
-  document.getElementById('adv-title').textContent = PERIOD_KEYWORDS[per-1];
-  document.getElementById('adv-favor').innerHTML = a.favor.map(f=>`<li>${f}</li>`).join('');
-  document.getElementById('adv-avoid').innerHTML = a.avoid.map(f=>`<li>${f}</li>`).join('');
-  document.getElementById('adv-summary').textContent = a.summary;
+function detectTZ(){
+  try{
+    const iana=Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const jan=new Date(Date.UTC(2024,0,15,12,0,0));
+    const parts=new Intl.DateTimeFormat('en-US',{timeZone:iana,hour:'numeric',minute:'numeric',hour12:false}).formatToParts(jan);
+    const h=parseInt(parts.find(p=>p.type==='hour').value);
+    const mn=parseInt(parts.find(p=>p.type==='minute').value);
+    let off=(h*60+mn)-720;
+    if(off>720)off-=1440; if(off<-720)off+=1440;
+    const offH=off/60;
+    const sel=document.getElementById('tzOffset');
+    let best=null,bd=999;
+    for(let o of sel.options){ let v=parseFloat(o.value),d=Math.abs(v-offH); if(d<bd){bd=d;best=o.value;} }
+    if(best!==null) sel.value=best;
+    document.getElementById('tz-note').textContent=`Detected: ${iana} → UTC${offH>=0?'+':''}${offH} standard. Daylight saving ignored per Lewis.`;
+  }catch(e){ document.getElementById('tz-note').textContent='Auto-detection unavailable. Select your offset manually.'; }
 }
 
-// ── MAIN CALCULATE ─────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────────────────────
 
-function calculate() {
-  const bv = document.getElementById('birthDate').value;
-  const bt = document.getElementById('birthTime').value;
-  const fv = document.getElementById('forecastDate').value || new Date().toISOString().slice(0,10);
-  const tzOff = parseFloat(document.getElementById('tzOffset').value);
+function showTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['daily','yearperiod','about'][i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-  if (!bv) { alert('Please enter your date of birth.'); return; }
+// ── ADVICE ────────────────────────────────────────────────────────────────
 
-  const [bY,bM,bD] = bv.split('-').map(Number);
-  const [fY,fM,fD] = fv.split('-').map(Number);
-  const forecastDate = new Date(Date.UTC(fY,fM-1,fD));
+function renderAdvice(per){
+  const a=PERIOD_ADVICE[per-1];
+  document.getElementById('adv-num').textContent=per;
+  document.getElementById('adv-title').textContent=PERIOD_KEYWORDS[per-1];
+  document.getElementById('adv-favor').innerHTML=a.favor.map(f=>`<li>${f}</li>`).join('');
+  document.getElementById('adv-avoid').innerHTML=a.avoid.map(f=>`<li>${f}</li>`).join('');
+  document.getElementById('adv-summary').textContent=a.summary;
+}
 
-  // Local standard time right now
-  const now = new Date();
-  let localMins = now.getUTCHours()*60 + now.getUTCMinutes() + tzOff*60;
-  let dayShift = 0;
-  if (localMins < 0) { localMins += 1440; dayShift = -1; }
-  else if (localMins >= 1440) { localMins -= 1440; dayShift = 1; }
+// ── CALCULATE ─────────────────────────────────────────────────────────────
 
-  const localDate = new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()) + dayShift*86400000);
-  const isToday = fY===localDate.getUTCFullYear() && fM===localDate.getUTCMonth()+1 && fD===localDate.getUTCDate();
+function calculate(){
+  const bv=document.getElementById('birthDate').value;
+  const bt=document.getElementById('birthTime').value;
+  const fv=document.getElementById('forecastDate').value||new Date().toISOString().slice(0,10);
+  const tzOff=parseFloat(document.getElementById('tzOffset').value);
+  if(!bv){alert('Please enter your date of birth.');return;}
 
-  // Day of week for forecast date in local standard time
-  const localFcDate = new Date(forecastDate.getTime() + tzOff*3600000);
-  const dow = localFcDate.getUTCDay();
+  const[bY,bM,bD]=bv.split('-').map(Number);
+  const[fY,fM,fD]=fv.split('-').map(Number);
+  const forecastDate=new Date(Date.UTC(fY,fM-1,fD));
 
-  const curPer  = isToday ? getCurrentPeriod(localMins) : null;
-  const curNote = curPer  ? getNoteForPeriod(dow, curPer) : null;
-  const birthPer  = getBirthPeriod(bt);
-  const birthNote = birthPer ? getNoteForPeriod(dow, birthPer) : null;
+  const now=new Date();
+  let localMins=now.getUTCHours()*60+now.getUTCMinutes()+tzOff*60;
+  let dayShift=0;
+  if(localMins<0){localMins+=1440;dayShift=-1;}else if(localMins>=1440){localMins-=1440;dayShift=1;}
+  const localDate=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate())+dayShift*86400000);
+  const isToday=fY===localDate.getUTCFullYear()&&fM===localDate.getUTCMonth()+1&&fD===localDate.getUTCDate();
 
-  const lifeCycle = reduceNum(reduceNum(bY) + reduceNum(bM) + reduceNum(bD));
-  const soulCycle = reduceNum(reduceNum(bM) + reduceNum(bD));
+  const localFcDate=new Date(forecastDate.getTime()+tzOff*3600000);
+  const dow=localFcDate.getUTCDay();
 
-  const { period: yp, bdayYear } = computeYearPeriod(bM, bD, forecastDate);
-  const yearPeriodDates = getYearPeriodDates(bM, bD, bdayYear);
+  const curPer=isToday?getCurrentPeriod(localMins):null;
+  const curNote=curPer?getNoteForPeriod(dow,curPer):null;
+  const birthPer=getBirthPeriod(bt);
+  const birthNote=birthPer?getNoteForPeriod(dow,birthPer):null;
+  const lifeCycle=reduceNum(reduceNum(bY)+reduceNum(bM)+reduceNum(bD));
+  const soulCycle=reduceNum(reduceNum(bM)+reduceNum(bD));
+  const{period:yp,bdayYear}=computeYearPeriod(bM,bD,forecastDate);
+  const yearPeriodDates=getYearPeriodDates(bM,bD,bdayYear);
+  const tzLabel=`UTC${tzOff>=0?'+':''}${tzOff%1===0?tzOff:tzOff}`;
 
-  const tzLabel = `UTC${tzOff>=0?'+':''}${tzOff%1===0?tzOff:tzOff}`;
+  document.getElementById('dateDisplay').textContent=DOWS[dow]+', '+MONTHS[fM-1]+' '+fD+', '+fY+'  ·  '+tzLabel;
 
-  // ── Fill UI ──
+  const fcPer=curPer||1;
+  document.getElementById('d-current').textContent=curPer||'—';
+  document.getElementById('d-current-note').textContent=curNote?curNote+' · '+NOTE_PLANET[curNote]:(isToday?'—':'Not today');
+  document.getElementById('d-birth').textContent=birthPer||'—';
+  document.getElementById('d-birth-note').textContent=birthNote?birthNote+' · '+NOTE_PLANET[birthNote]:'Enter birth time';
+  const dayOpenNote=NOTES[DAY_FIRST_NOTE[dow]];
+  document.getElementById('d-note').textContent=dayOpenNote;
+  document.getElementById('d-daynote').textContent=NOTE_PLANET[dayOpenNote];
+  document.getElementById('d-fc-num').textContent=fcPer;
+  document.getElementById('d-fc-keyword').textContent=PERIOD_KEYWORDS[fcPer-1];
+  document.getElementById('d-fc-body').textContent=PERIOD_DESC[fcPer-1];
+  document.getElementById('tl-title').textContent='All Seven Periods — '+DOWS[dow]+' · '+tzLabel;
 
-  document.getElementById('dateDisplay').textContent =
-    DOWS[dow] + ', ' + MONTHS[fM-1] + ' ' + fD + ', ' + fY + '  ·  ' + tzLabel;
-
-  const fcPer = curPer || 1;
-  document.getElementById('d-current').textContent = curPer || '—';
-  document.getElementById('d-current-note').textContent = curNote
-    ? curNote + ' · ' + NOTE_PLANET[curNote]
-    : (isToday ? '—' : 'Not today');
-  document.getElementById('d-birth').textContent = birthPer || '—';
-  document.getElementById('d-birth-note').textContent = birthNote
-    ? birthNote + ' · ' + NOTE_PLANET[birthNote]
-    : 'Enter birth time';
-
-  const dayOpenNote = NOTES[DAY_FIRST_NOTE[dow]];
-  document.getElementById('d-note').textContent = dayOpenNote;
-  document.getElementById('d-daynote').textContent = NOTE_PLANET[dayOpenNote];
-
-  document.getElementById('d-fc-num').textContent = fcPer;
-  document.getElementById('d-fc-keyword').textContent = PERIOD_KEYWORDS[fcPer-1];
-  document.getElementById('d-fc-body').textContent = PERIOD_DESC[fcPer-1];
-
-  document.getElementById('tl-title').textContent =
-    'All Seven Periods — ' + DOWS[dow] + ' · ' + tzLabel;
-
-  let tlHtml = '';
-  for (let i=1; i<=7; i++) {
-    const note = getNoteForPeriod(dow, i);
-    const isCur = i === curPer;
-    const isBirth = i === birthPer;
-    tlHtml += `<div class="tl-row${isCur ? ' current' : ''}">
+  let tlHtml='';
+  for(let i=1;i<=7;i++){
+    const note=getNoteForPeriod(dow,i),isCur=i===curPer,isBirth=i===birthPer;
+    tlHtml+=`<div class="tl-row${isCur?' current':''}">
       <span class="tl-time">${fmt24(PERIOD_MINS[i-1])}–${fmt24(PERIOD_MINS[i])}</span>
-      <span style="color:var(--ink-dim)">${i} · ${note} · <em>${PERIOD_KEYWORDS[i-1].split('&')[0].trim()}</em>${isBirth ? ' <span style="color:var(--gold)">✦</span>' : ''}</span>
-      ${isCur ? '<span class="tl-now">Now</span>' : '<span class="tl-side">' + NOTE_PLANET[note] + '</span>'}
+      <span class="tl-desc">${i} · ${note} · <em>${PERIOD_KEYWORDS[i-1].split('&')[0].trim()}</em>${isBirth?' <span style="color:var(--gold)">✦</span>':''}</span>
+      ${isCur?'<span class="tl-now">Now</span>':'<span class="tl-side">'+NOTE_PLANET[note]+'</span>'}
     </div>`;
   }
-  document.getElementById('tl-rows').innerHTML = tlHtml;
-
+  document.getElementById('tl-rows').innerHTML=tlHtml;
   renderAdvice(fcPer);
 
-  if (birthPer) {
-    document.getElementById('birth-period-head').textContent =
-      `Birth Period — Period ${birthPer} (${fmt24(PERIOD_MINS[birthPer-1])}–${fmt24(PERIOD_MINS[birthPer])}) · Note ${birthNote}`;
-    document.getElementById('birth-period-body').textContent =
-      `You were born in the ${ORD[birthPer-1]} of the seven daily periods. This period's vibration — ${PERIOD_KEYWORDS[birthPer-1]} — represents a permanent keynote woven into your personal nature, a quality you carry throughout life from the hour of your birth.`;
-    document.getElementById('birth-period-box').style.display = 'block';
-  } else {
-    document.getElementById('birth-period-box').style.display = 'none';
-  }
+  if(birthPer){
+    document.getElementById('birth-period-head').textContent=`Birth Period — Period ${birthPer} (${fmt24(PERIOD_MINS[birthPer-1])}–${fmt24(PERIOD_MINS[birthPer])}) · Note ${birthNote}`;
+    document.getElementById('birth-period-body').textContent=`You were born in the ${ORD[birthPer-1]} of the seven daily periods. This period's vibration — ${PERIOD_KEYWORDS[birthPer-1]} — represents a permanent keynote woven into your personal nature, a quality you carry throughout life from the hour of your birth.`;
+    document.getElementById('birth-period-box').style.display='block';
+  }else{ document.getElementById('birth-period-box').style.display='none'; }
 
-  // Year tab
-  document.getElementById('y-fc-num').textContent = yp;
-  document.getElementById('y-fc-keyword').textContent = YEAR_PERIOD_NAMES[yp];
-  document.getElementById('y-fc-body').textContent = PERIOD_DESC[yp-1];
+  document.getElementById('y-fc-num').textContent=yp;
+  document.getElementById('y-fc-keyword').textContent=YEAR_PERIOD_NAMES[yp];
+  document.getElementById('y-fc-body').textContent=PERIOD_DESC[yp-1];
 
-  let yrHtml = '';
-  yearPeriodDates.forEach(({start,end}, idx) => {
-    const p = idx+1, isActive = p === yp;
-    yrHtml += `<div class="yp-row${isActive ? ' active-period' : ''}">
+  let yrHtml='';
+  yearPeriodDates.forEach(({start,end},idx)=>{
+    const p=idx+1,isActive=p===yp;
+    yrHtml+=`<div class="yp-row${isActive?' active-period':''}">
       <span class="yp-label">Per. ${p}</span>
       <span class="yp-name">${YEAR_PERIOD_NAMES[p]}</span>
-      <span class="yp-dates">${fmtDate(start)} – ${fmtDate(end)}${isActive ? ' <span class="yp-badge">Now</span>' : ''}</span>
+      <span class="yp-dates">${fmtDate(start)} – ${fmtDate(end)}${isActive?' <span class="yp-badge">Now</span>':''}</span>
     </div>`;
   });
-  document.getElementById('year-rows').innerHTML = yrHtml;
+  document.getElementById('year-rows').innerHTML=yrHtml;
 
-  // About tab
-  document.getElementById('a-life').textContent = lifeCycle;
-  document.getElementById('a-life-name').textContent = LIFE_CYCLE_NAMES[lifeCycle] || '—';
-  document.getElementById('a-soul').textContent = soulCycle;
-  document.getElementById('a-soul-name').textContent = LIFE_CYCLE_NAMES[soulCycle] || '—';
-  document.getElementById('a-life-body').textContent = LIFE_CYCLE_DESC[lifeCycle] || '';
-  document.getElementById('a-hour-body').textContent = birthPer
-    ? `You were born in the ${ORD[birthPer-1]} of the seven daily periods (${fmt24(PERIOD_MINS[birthPer-1])}–${fmt24(PERIOD_MINS[birthPer])} standard time). Lewis teaches that this hour imprints the quality of that period permanently upon the nature. Your birth note is ${birthNote} — associated with ${NOTE_PLANET[birthNote]}. In any given day, the period matching your birth period number carries special personal resonance.`
-    : `Enter your birth time (in the standard time of your birth location) to discover which of the seven daily periods you were born into, and the planetary note Lewis associates with your hour of birth.`;
+  document.getElementById('a-life').textContent=lifeCycle;
+  document.getElementById('a-life-name').textContent=LIFE_CYCLE_NAMES[lifeCycle]||'—';
+  document.getElementById('a-soul').textContent=soulCycle;
+  document.getElementById('a-soul-name').textContent=LIFE_CYCLE_NAMES[soulCycle]||'—';
+  document.getElementById('a-life-body').textContent=LIFE_CYCLE_DESC[lifeCycle]||'';
+  document.getElementById('a-hour-body').textContent=birthPer
+    ?`You were born in the ${ORD[birthPer-1]} of the seven daily periods (${fmt24(PERIOD_MINS[birthPer-1])}–${fmt24(PERIOD_MINS[birthPer])} standard time). Lewis teaches that this hour imprints the quality of that period permanently upon the nature. Your birth note is ${birthNote} — associated with ${NOTE_PLANET[birthNote]}. In any given day, the period matching your birth period number carries special personal resonance.`
+    :`Enter your birth time (in the standard time of your birth location) to discover which of the seven daily periods you were born into, and the planetary note Lewis associates with your hour of birth.`;
 
-  // Show results
   document.getElementById('results').classList.add('on');
-  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── SAVE BIRTH DATA ───────────────────────────────────────────────
-// Persist birth date/time/tz in localStorage so the app remembers
+// ── PERSIST PREFS ─────────────────────────────────────────────────────────
 
-function savePrefs() {
-  try {
+function savePrefs(){
+  try{
     localStorage.setItem('col_birthDate', document.getElementById('birthDate').value);
     localStorage.setItem('col_birthTime', document.getElementById('birthTime').value);
-    localStorage.setItem('col_tzOffset', document.getElementById('tzOffset').value);
-  } catch(e) {}
+    localStorage.setItem('col_tzOffset',  document.getElementById('tzOffset').value);
+  }catch(e){}
 }
 
-function loadPrefs() {
-  try {
-    const bd = localStorage.getItem('col_birthDate');
-    const bt = localStorage.getItem('col_birthTime');
-    const tz = localStorage.getItem('col_tzOffset');
-    if (bd) document.getElementById('birthDate').value = bd;
-    if (bt) document.getElementById('birthTime').value = bt;
-    if (tz) document.getElementById('tzOffset').value = tz;
-  } catch(e) {}
+function loadPrefs(){
+  try{
+    const bd=localStorage.getItem('col_birthDate');
+    const bt=localStorage.getItem('col_birthTime');
+    const tz=localStorage.getItem('col_tzOffset');
+    const th=localStorage.getItem('col_theme');
+    if(bd) document.getElementById('birthDate').value=bd;
+    if(bt) document.getElementById('birthTime').value=bt;
+    if(tz) document.getElementById('tzOffset').value=tz;
+    if(th) applyTheme(th);
+  }catch(e){}
 }
 
-// Hook save on change
-['birthDate','birthTime','tzOffset'].forEach(id => {
+['birthDate','birthTime','tzOffset'].forEach(id=>{
   document.getElementById(id).addEventListener('change', savePrefs);
 });
 
-// Wrap calculate to save prefs too
-const _calc = calculate;
-window.calculate = function() { savePrefs(); _calc(); };
+const _calc=calculate;
+window.calculate=function(){ savePrefs(); _calc(); };
 
-// ── PWA INSTALL PROMPT ────────────────────────────────────────────
+// ── PWA INSTALL ───────────────────────────────────────────────────────────
 
-let deferredPrompt = null;
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBanner').classList.add('visible'); });
+document.getElementById('installBtn').addEventListener('click', async()=>{ if(!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; document.getElementById('installBanner').classList.remove('visible'); });
+window.addEventListener('appinstalled',()=>{ document.getElementById('installBanner').classList.remove('visible'); });
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBanner').classList.add('visible');
-});
+// ── SERVICE WORKER ────────────────────────────────────────────────────────
 
-document.getElementById('installBtn').addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  document.getElementById('installBanner').classList.remove('visible');
-});
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
 
-window.addEventListener('appinstalled', () => {
-  document.getElementById('installBanner').classList.remove('visible');
-});
+// ── INIT ──────────────────────────────────────────────────────────────────
 
-// ── SERVICE WORKER ────────────────────────────────────────────────
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
-
-// ── INIT ──────────────────────────────────────────────────────────
-
+document.getElementById('forecastDate').value=new Date().toISOString().slice(0,10);
 detectTZ();
-document.getElementById('forecastDate').value = new Date().toISOString().slice(0,10);
 loadPrefs();
 </script>
 </body>
